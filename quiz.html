@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Interactive quiz: identify Greek architectural structures with extended facts." />
+  <meta name="author" content="Colin Pettry" />
+  <title>Structures Quiz</title>
+
+  <!-- Animate.css -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Trebuchet MS', sans-serif;
+      background: linear-gradient(135deg, #e2e2e2, #c9d6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    #quiz-container {
+      position: relative;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      padding: 30px;
+      overflow: hidden;
+    }
+    .nav-scratch {
+      position: absolute;
+      top: -40px;
+      left: 0;
+    }
+    .nav-scratch a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .nav-scratch a:hover {
+      text-decoration: underline;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #343a40;
+    }
+    .progress {
+      height: 12px;
+      background: #e9ecef;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #007bff;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    #structure-image {
+      display: block;
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .choice-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 2px solid #6c757d;
+      border-radius: 6px;
+      background: #f8f9fa;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.3s;
+    }
+    .choice-btn:hover { background: #e2e6ea; }
+    .choice-btn.correct { border-color: #28a745; background: #d4edda; }
+    .choice-btn.wrong   { border-color: #dc3545; background: #f8d7da; }
+    #feedback {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+      min-height: 1.2em;
+    }
+    #details {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.6s ease, padding 0.6s ease;
+      background: #f1f1f1;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      padding: 0 15px;
+    }
+    #details.open {
+      max-height: 200px;
+      padding: 15px;
+    }
+    #details ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    #next-btn {
+      display: none;
+      margin: 0 auto 20px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    #next-btn:hover { background: #0056b3; }
+    /* Container pulse effect */
+    @keyframes containerPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(40,167,69,0.7); }
+      70%  { box-shadow: 0 0 0 20px rgba(40,167,69,0); }
+      100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+    }
+    .pulse-container {
+      animation: containerPulse 1s ease-out;
+    }
+    #result {
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    #result i { color: #ffc107; margin-right: 8px; }
+    #back-btn {
+      display: none;
+      margin: 20px auto 0;
+      padding: 10px 20px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    #back-btn:hover { background: #218838; }
+  </style>
+</head>
+<body>
+  <div id="quiz-container">
+    <div class="nav-scratch"><a href="ruins.html">← Back to Ancient Greece</a></div>
+    <h1>Structures Quiz</h1>
+    <div class="progress"><div id="progress-bar" class="progress-bar"></div></div>
+    <img id="structure-image" src="" alt="Structure Image">
+    <div id="question-text"></div>
+    <div id="choices"></div>
+    <div id="feedback"></div>
+    <div id="details"></div>
+    <button id="next-btn">Next</button>
+    <div id="result"></div>
+    <button id="back-btn" onclick="location.href='ruins.html'">← Back to Ancient Greece</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        name: 'Parthenon',
+        img: 'assets/images/parthenon.jpg',
+        choices: ['Parthenon','Temple of Hephaestus','Theatre of Epidaurus'],
+        details: [
+          'Dedicated to the goddess Athena',
+          'Completed in 432 BCE under Pericles',
+          'Marbles sculpted by Phidias'
+        ]
+      },
+      {
+        name: 'Temple of Hephaestus',
+        img: 'assets/images/hephaestus.jpg',
+        choices: ['Parthenon','Temple of Hephaestus','Theatre of Epidaurus'],
+        details: [
+          'One of the best‑preserved Doric temples',
+          'Completed around 415 BCE',
+          'Originally dedicated to Theseus'
+        ]
+      },
+      {
+        name: 'Theatre of Epidaurus',
+        img: 'assets/images/epidaurus.jpg',
+        choices: ['Parthenon','Temple of Hephaestus','Theatre of Epidaurus'],
+        details: [
+          'Seating capacity ≈14,000',
+          'Built 4th century BCE by Polycleitus the Younger',
+          'Still hosts performances today'
+        ]
+      },
+      {
+        name: 'Ionic Order',
+        questionText: 'Which order features scroll‑shaped capitals called volutes?',
+        choices: ['Doric Order','Ionic Order','Corinthian Order'],
+        details: [
+          'Originated in Ionic regions of Asia Minor',
+          'Columns are more slender than Doric',
+          'Often used for smaller temples'
+        ]
+      },
+      {
+        name: 'Temple',
+        questionText: 'What structure served as a place of worship in ancient Greece?',
+        choices: ['Stadium','Theater','Temple'],
+        details: [
+          'Dedicated to gods/goddesses',
+          'Housed cult statues',
+          'Central to civic and religious life'
+        ]
+      },
+      {
+        name: 'Marble',
+        questionText: 'Which material was commonly used for Greek temples?',
+        choices: ['Wood','Brick','Marble'],
+        details: [
+          'Durable and allowed fine sculpture',
+          'Locally quarried at Mount Pentelicus',
+          'Gave temples their iconic white appearance'
+        ]
+      },
+      {
+        name: 'Marathon',
+        questionText: 'Which athletic event originated in ancient Greece?',
+        choices: ['Chariot racing','Marathon','Pankration'],
+        details: [
+          'Commemorates messenger Pheidippides',
+          'Run from Marathon to Athens (~26 miles)',
+          'First modern Olympic marathon in 1896'
+        ]
+      },
+      {
+        name: 'Skene',
+        questionText: 'Which architectural feature allowed natural lighting in Greek theaters?',
+        choices: ['Orchestra','Skene','Diazoma'],
+        details: [
+          'Skene was the stage building backdrop',
+          'Often had openings for light and scenery',
+          'Provided sheltered area for actors'
+        ]
+      },
+      {
+        name: 'Orchestra',
+        questionText: 'What is the term for the performance area in a Greek theater?',
+        choices: ['Parodos','Orchestra','Proscenium'],
+        details: [
+          'Circular space at center of theater',
+          'Chorus performed here',
+          'Raised slightly for visibility'
+        ]
+      },
+      {
+        name: 'Olympia',
+        questionText: 'Which city hosted the ancient Olympic Games?',
+        choices: ['Athens','Olympia','Sparta'],
+        details: [
+          'Site of the original Olympic Games',
+          'Located in the Peloponnese region',
+          'Held every four years starting 776 BCE'
+        ]
+      }
+    ];
+
+    let current = 0, score = 0;
+    const container = document.getElementById('quiz-container'),
+          imgEl = document.getElementById('structure-image'),
+          questionTextEl = document.getElementById('question-text'),
+          choicesEl = document.getElementById('choices'),
+          feedbackEl = document.getElementById('feedback'),
+          detailsEl = document.getElementById('details'),
+          nextBtn = document.getElementById('next-btn'),
+          resultEl = document.getElementById('result'),
+          backBtn = document.getElementById('back-btn'),
+          progressBar = document.getElementById('progress-bar');
+
+    function updateProgress() {
+      progressBar.style.width = `${(current / questions.length) * 100}%`;
+    }
+
+    function showQuestion() {
+      const q = questions[current];
+      // clear previous questionText
+      questionTextEl.textContent = '';
+
+      // image handling
+      if (q.img) {
+        imgEl.style.display = '';
+        imgEl.src = q.img; imgEl.alt = q.name;
+      } else {
+        imgEl.style.display = 'none';
+      }
+
+      // custom text
+      if (q.questionText) {
+        questionTextEl.textContent = q.questionText;
+        questionTextEl.style.fontWeight = 'bold';
+        questionTextEl.style.marginBottom = '15px';
+      }
+
+      feedbackEl.textContent = '';
+      detailsEl.className = '';
+      detailsEl.innerHTML = '';
+      nextBtn.style.display = 'none';
+      resultEl.textContent = '';
+      backBtn.style.display = 'none';
+      choicesEl.innerHTML = '';
+      updateProgress();
+
+      q.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = choice;
+        btn.onclick = () => selectAnswer(btn, q);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(btn, q) {
+      document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+      if (btn.textContent === q.name) {
+        btn.classList.add('correct','animate__animated','animate__pulse');
+        feedbackEl.textContent = '🎉 Correct!';
+        score++;
+        container.classList.add('pulse-container');
+        container.addEventListener('animationend', ()=> {
+          container.classList.remove('pulse-container');
+        }, { once: true });
+        // show details
+        const ul = document.createElement('ul');
+        q.details.forEach(text => {
+          const li = document.createElement('li'); li.textContent = text;
+          ul.appendChild(li);
+        });
+        detailsEl.appendChild(ul);
+        detailsEl.classList.add('open','animate__animated','animate__fadeInDown');
+        confetti({ particleCount: 100, spread: 70 });
+      } else {
+        btn.classList.add('wrong','animate__animated','animate__shakeX');
+        feedbackEl.textContent = `✖️ Wrong! It was ${q.name}.`;
+      }
+
+      nextBtn.style.display = 'block';
+      nextBtn.textContent = current < questions.length - 1 ? 'Next' : 'See Results';
+    }
+
+    nextBtn.onclick = () => {
+      current++;
+      if (current < questions.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    };
+
+    function showResults() {
+      imgEl.style.display = 'none';
+      questionTextEl.style.display = 'none';
+      choicesEl.style.display = 'none';
+      feedbackEl.style.display = 'none';
+      detailsEl.style.display = 'none';
+      nextBtn.style.display = 'none';
+      progressBar.parentElement.style.display = 'none';
+      resultEl.innerHTML = `<i class="fas fa-trophy"></i> You scored ${score} / ${questions.length}!`;
+      backBtn.style.display = 'block';
+      confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>

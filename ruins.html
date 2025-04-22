@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Scratch page showcasing Ancient Greece ruins with HTML/CSS demos." />
+  <meta name="author" content="Colin Pettry" />
+  <title>Colin Pettry – Ancient Greece Ruins</title>
+  <link href="css/scratch.css" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="rnav">
+    <ul class="rnav">
+      <a href="index.html">Home</a> |
+      <a href="resume.html">Resume</a> |
+      <a href="ruins.html">Ancient Greece</a> |
+      <a href="quiz.html">Structures Quiz</a> |
+      <br><br>
+      <a href="#parthenon">Parthenon</a> |
+      <a href="#hephaestus">Hephaestus</a> |
+      <a href="#epidaurus">Epidaurus</a>
+    </ul>
+  </div>
+
+  <div class="rhead">
+    <h1>Ancient Greece Ruins</h1>
+    <span class="rsubhead">Architectural Wonders of the Past</span>
+  </div>
+
+  <main class="rmain">
+
+    <div id="parthenon">
+      <ol>
+        <li>Parthenon
+          <ul>
+            <li>Temple of Athena
+              <ul>
+                <li>Constructed 447–432 BCE under Pericles</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ol>
+      <img
+        src="assets/images/parthenon.jpg"
+        height="450px"
+        width="600px"
+        alt="Parthenon Ruins"
+      >
+    </div>
+
+    <div id="hephaestus">
+      <ol>
+        <li>Temple of Hephaestus
+          <ul>
+            <li>Completed circa 415 BCE
+              <ol>
+                <li>One of the best‑preserved Doric temples</li>
+              </ol>
+            </li>
+          </ul>
+        </li>
+      </ol>
+      <img
+        src="assets/images/hephaestus.jpg"
+        height="450px"
+        width="600px"
+        alt="Temple of Hephaestus Ruins"
+      >
+    </div>
+
+    <div id="epidaurus">
+      <ol>
+        <li>Theatre of Epidaurus
+          <ul>
+            <li>Renowned for its exceptional acoustics
+              <ul>
+                <li>Seating capacity ~14,000</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ol>
+      <img
+        src="assets/images/epidaurus.jpg"
+        height="450px"
+        width="600px"
+        alt="Theatre of Epidaurus Ruins"
+      >
+    </div>
+
+    <div class="videosection">
+        <p>Take a guided walking tour of the Ancient Agora of Athens:</p>
+        <iframe
+          width="560" height="315" src="https://www.youtube.com/embed/OwiOygOdosY" title="Ancient Agora of Athens - 4K Guided Walk with History" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+        ></iframe>
+      </div>
+
+    <div>
+      <p>Family Trees of Ancient Mythology:</p>
+      <div class="tableausection" id="vizFamilyTree" style="position: relative;">
+        <noscript>
+          <a href="#"><img alt="Mythology Family Tree" src="https://public.tableau.com/static/images/Fa/FamilyTreesofAncientMythology/FamilyTrees/1_rss.png" style="border: none;" /></a>
+        </noscript>
+        <object class="tableauViz" style="display:none;">
+          <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" /> <param name="embed_code_version" value="3" /> <param name="site_root" value="" /> <param name="name" value="FamilyTreesofAncientMythology/FamilyTrees" /> <param name="tabs" value="no" /> <param name="toolbar" value="yes" />
+        </object>
+      </div>
+      <script type="text/javascript" src="https://public.tableau.com/javascripts/api/viz_v1.js"></script>
+      <script>
+        const ftDiv = document.getElementById('vizFamilyTree'); const ftObj = ftDiv.getElementsByTagName('object')[0]; ftObj.style.width = '100%'; ftObj.style.height = '600px';
+      </script>
+    </div>
+
+  </main>
+</body>
+</html>

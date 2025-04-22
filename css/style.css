@@ -1,0 +1,18 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+  }
+  h1,
+  h5 {
+    font-family: 'Lora', serif;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    transition: transform 0.2s;
+  }
+   
+  header.bg-primary h1,
+  header.bg-primary p {
+    color: #fff !important;
+  }
+  
